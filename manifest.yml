@@ -260,6 +260,11 @@ actions:
             sed -ci -e 's/#hosts:[[:space:]]*\[".*:9200"\]/hosts: ["${settings.elasticsearchHost}"]/g' ${this.serviceConfigPath};
             sed -ci -e 's/#protocol: "https"/protocol: "https"/g' ${this.serviceConfigPath};
           user: root
+        - if ('${settings.elasticsearchUser:}'):
+            - cmd [${this.affectedNodes}]: |-
+                sed -ci -e 's/#username:[[:space:]]*"elastic"/username: "${settings.elasticsearchUser}"/g' ${this.serviceConfigPath};
+                sed -ci -e 's/#password:[[:space:]]*"changeme"/password: "${settings.elasticsearchPassword:}"/g' ${this.serviceConfigPath};
+              user: root     
     - else:
         - cmd [${this.affectedNodes}]: |-
             sed -ci -e 's/^[[:space:]]*output.elasticsearch:/#output.elasticsearch:/g' ${this.serviceConfigPath};
@@ -274,11 +279,6 @@ actions:
         - cmd [${this.affectedNodes}]: |-
             sed -ci -e 's/#host:[[:space:]]*"localhost:5601"/host: "${settings.kibanaHost}"/g' ${this.serviceConfigPath};
           user: root
-    - if ('${settings.elasticsearchUser:}'):
-        - cmd [${this.affectedNodes}]: |-
-            sed -ci -e 's/#username:[[:space:]]*"elastic"/username: "${settings.elasticsearchUser}"/g' ${this.serviceConfigPath};
-            sed -ci -e 's/#password:[[:space:]]*"changeme"/password: "${settings.elasticsearchPassword:}"/g' ${this.serviceConfigPath};
-          user: root     
   
   installModules:        
     - script: |
