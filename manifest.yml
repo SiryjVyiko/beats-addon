@@ -256,13 +256,14 @@ actions:
   configureService:
     - if ('${settings.elasticsearchHost:}'):
         - cmd [${this.affectedNodes}]: |-
-            sed -ci -e 's/hosts:[[:space:]]*\["localhost:9200"\]/hosts: ["${settings.elasticsearchHost}"]/g' ${this.serviceConfigPath};
-            sed -ci -e 's/#protocol: "https"/protocol: "http[s]*"/g' ${this.serviceConfigPath};
+            sed -ci -e 's/^[[:space:]]*output.elasticsearch:/#output.elasticsearch:/g' ${this.serviceConfigPath};
+            sed -ci -e 's/#hosts:[[:space:]]*\[".*:9200"\]/hosts: ["${settings.elasticsearchHost}"]/g' ${this.serviceConfigPath};
+            sed -ci -e 's/#protocol: "https"/protocol: "https"/g' ${this.serviceConfigPath};
           user: root
     - else:
         - cmd [${this.affectedNodes}]: |-
             sed -ci -e 's/^[[:space:]]*output.elasticsearch:/#output.elasticsearch:/g' ${this.serviceConfigPath};
-            sed -ci -e 's/^[[:space:]]*hosts:[[:space:]]*\["localhost:9200"\]/#hosts: ["localhost:9200"]/g' ${this.serviceConfigPath};
+            sed -ci -e 's/^[[:space:]]*hosts:[[:space:]]*\[".*:9200"\]/  #hosts: ["localhost:9200"]/g' ${this.serviceConfigPath};
           user: root
         - if ('${settings.logstashHost:}'):
             - cmd [${this.affectedNodes}]: |-
