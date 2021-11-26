@@ -202,15 +202,14 @@ actions:
         affectedNodes: ${this.affectedNodes}
        
   removeStrictPerms:
-    - if ('${this.agentName}' != 'heartbeat-elastic'):
-        cmd [${targetNodes.nodeType}]: |-
-          sed -ci -e 's|--path.logs /var/log/${this.agentName}|--path.logs /var/log/${this.agentName} --strict.perms=false|' /usr/lib/systemd/system/${this.agentName}.service
-        user: root
     - if ('${this.agentName}' == 'heartbeat-elastic'):
-        cmd [${targetNodes.nodeType}]: |-
-          sed -ci -e 's|--path.logs /var/log/heartbeat|--path.logs /var/log/heartbeat --strict.perms=false|' /usr/lib/systemd/system/${this.agentName}.service
-        user: root
+        - set:
+            logFolder: heartbeat
+    - if ('${this.agentName}' != 'heartbeat-elastic'):
+        - set:
+            logFolder: ${this.agentName}
     - cmd [${targetNodes.nodeType}]: |-
+        sed -ci -e 's|--path.logs /var/log/${this.logFolder}|--path.logs /var/log/${this.logFolder} --strict.perms=false|' /usr/lib/systemd/system/${this.agentName}.service
         systemctl daemon-reload; systemctl start ${this.agentName}
       user: root
 
