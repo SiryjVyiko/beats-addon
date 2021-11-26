@@ -257,8 +257,9 @@ actions:
     - if ('${settings.elasticsearchHost:}'):
         - cmd [${this.affectedNodes}]: |-
             sed -ci -e 's/^[[:space:]]*output.elasticsearch:/#output.elasticsearch:/g' ${this.serviceConfigPath};
+            grep -q 'ssl.verification_mode' ${this.serviceConfigPath} || sed -ci -e '/^output.elasticsearch/ a\  ssl.verification_mode: "none"' ${this.serviceConfigPath};
             sed -ci -e 's/#hosts:[[:space:]]*\[".*:9200"\]/hosts: ["${settings.elasticsearchHost}"]/g' ${this.serviceConfigPath};
-            sed -ci -e 's/#protocol: "https"/protocol: "https"/g' ${this.serviceConfigPath};
+            sed -ci -e 's/#protocol: "https"/protocol: "https"/g' ${this.serviceConfigPath};    
           user: root
         - if ('${settings.elasticsearchUser:}'):
             - cmd [${this.affectedNodes}]: |-
