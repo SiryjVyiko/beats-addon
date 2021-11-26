@@ -26,10 +26,6 @@ settings:
           - name: journalbeat
             caption: Journalbeat
             value: false
-
-          - name: auditbeat
-            caption: Auditbeat
-            value: false
           
           - name: packetbeat
             caption: Packetbeat
@@ -140,15 +136,6 @@ actions:
     - else:
         removeAgent:
           agentName: journalbeat
-          affectedNodes: ${this.affectedNodes}
-    - if (${settings.auditbeat:true}):
-        installAgent:
-          agentName: auditbeat
-          affectedNodes: ${this.affectedNodes}
-          serviceConfigPath: /etc/auditbeat/auditbeat.yml
-    - else:
-        removeAgent:
-          agentName: auditbeat
           affectedNodes: ${this.affectedNodes}
     - if (${settings.packetbeat:true}):
         installAgent:
