@@ -304,6 +304,7 @@ actions:
         return { result: 0, modules: fbModules.join(" ")};
 
     - cmd [${this.affectedNodes}]: |-
+        chmod go-w /etc/${this.agentName}/${this.agentName}.yml
         ${this.agentName} modules enable ${response.modules}
         ${this.agentName} setup
         service ${this.agentName} restart
