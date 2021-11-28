@@ -206,7 +206,7 @@ actions:
   
   addToExtendPerm:
     cmd [${this.affectedNodes}]: |- 
-      sed -ci -e 's|common |common /etc/${this.agentName};|g' /etc/jelastic/extendperm.conf;
+      sed -ci -e 's|common |common /etc/${this.agentName};/var/log/${this.agentName}|g' /etc/jelastic/extendperm.conf;
       jem filemanager extendperm;
     user: root
     
@@ -258,7 +258,7 @@ actions:
         - cmd [${this.affectedNodes}]: |-
             sed -ci -e 's/^#output.elasticsearch:/output.elasticsearch:/g' ${this.serviceConfigPath};
             grep -q 'ssl.verification_mode' ${this.serviceConfigPath} || sed -ci -e '/^output.elasticsearch/ a\  ssl.verification_mode: "none"' ${this.serviceConfigPath};
-            sed -ci -e 's/#hosts:[[:space:]]*\["localhost:9200"\]/hosts: ["${settings.elasticsearchHost}"]/g' ${this.serviceConfigPath};
+            sed -ci -e 's/[#]*hosts:[[:space:]]*\[".*:9200"\]/hosts: ["${settings.elasticsearchHost}"]/g' ${this.serviceConfigPath};
             sed -ci -e 's/#protocol: "https"/protocol: "https"/g' ${this.serviceConfigPath};
           user: root
         - if ('${settings.elasticsearchUser:}'):
