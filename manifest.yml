@@ -292,7 +292,6 @@ actions:
           'redis.*': [ 'redis' ],
           'postgres.*': [ 'postgresql' ],
           'mysql.*|mariadb.*|percona.*': [ 'mysql' ],
-          'postgres.*': [ 'postgresql' ],
           'mongo.*': [ 'mongodb' ]
         };
 
