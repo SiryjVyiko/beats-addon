@@ -106,6 +106,26 @@ onAfterRedeployContainer [target]:
 onAfterScaleOut [target]:
   installBeats: 
     affectedNodes: ${event.response.nodes.join(id,)}
+    
+onAfterClone:
+  - script: delete MANIFEST.id; return {result:0, jps:MANIFEST};
+  - install: ${response.jps}
+    envName: ${event.response.env.envName}
+    targetNodes:
+      nodeGroup: ${targetNodes.nodeGroup}
+    settings:
+      options: ${settings.options}
+      filebeat: ${settings.filebeat}
+      journalbeat: ${settings.journalbeat}
+      packetbeat: ${settings.packetbeat}
+      metricbeat: ${settings.metricbeat}
+      heartbeat: ${settings.heartbeat}
+      elasticsearchHost: ${settings.elasticsearchHost}
+      kibanaHost: ${settings.kibanaHost}
+      logstashHost: ${settings.logstashHost}
+      beatsossversion: ${settings.beatsossversion}
+      elasticsearchUser: ${settings.elasticsearchUser}
+      elasticsearchPassword: ${settings.elasticsearchPassword}
 
 onUninstall:
   uninstallAllAgents
@@ -196,13 +216,13 @@ actions:
     - if ('${this.agentName}' != 'heartbeat-elastic'):
         - set:
             logFolder: ${this.agentName}
-    - cmd [${targetNodes.nodeType}]: |-
+    - cmd [${targetNodes.nodeGroup}]: |-
         sed -ci -e 's|--path.logs /var/log/${this.logFolder}|--path.logs /var/log/${this.logFolder} --strict.perms=false|' /usr/lib/systemd/system/${this.agentName}.service
         systemctl daemon-reload; systemctl start ${this.agentName}
       user: root
 
   addSigninKey:
-    cmd [${targetNodes.nodeType}]: rpm --import https://packages.elastic.co/GPG-KEY-elasticsearch
+    cmd [${targetNodes.nodeGroup}]: rpm --import https://packages.elastic.co/GPG-KEY-elasticsearch
     user: root
   
   addToExtendPerm:
@@ -223,7 +243,7 @@ actions:
           autorefresh=1
           type=rpm-md
 
-    - cmd [${targetNodes.nodeType}]: echo '${this.body}' > /etc/yum.repos.d/elastic.repo
+    - cmd [${targetNodes.nodeGroup}]: echo '${this.body}' > /etc/yum.repos.d/elastic.repo
       user: root
       
   addServiceToSudoers:
