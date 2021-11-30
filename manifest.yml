@@ -271,11 +271,15 @@ actions:
         - cmd [${this.affectedNodes}]: |-
             sed -ci -e 's/^[[:space:]]*output.elasticsearch:/#output.elasticsearch:/g' ${this.serviceConfigPath};
             sed -ci -e 's/^[[:space:]]*hosts:[[:space:]]*\[".*:9200"\]/  #hosts: ["localhost:9200"]/g' ${this.serviceConfigPath};
+            sed -ci -e 's/[#]*output.logstash:/output.logstash:/g' ${this.serviceConfigPath};
           user: root
         - if ('${settings.logstashHost:}'):
             - cmd [${this.affectedNodes}]: |-
-                sed -ci -e 's/#output.logstash:/output.logstash:/g' ${this.serviceConfigPath};
-                sed -ci -e 's/#hosts:[[:space:]]*\["localhost:5044"\]/hosts: \["${settings.logstashHost}"\]/g' ${this.serviceConfigPath};
+                sed -ci -e 's/[#]*hosts:[[:space:]]*\[".*:5044"\]/hosts: \["${settings.logstashHost}"\]/g' ${this.serviceConfigPath};
+              user: root
+        - else:
+            - cmd [${this.affectedNodes}]: |-
+                sed -ci -e 's/[#]*hosts:[[:space:]]*\[".*:5044"\]/hosts: \["localhost:5044"\]/g' ${this.serviceConfigPath};
               user: root
     - if ('${settings.kibanaHost:}'):
         - cmd [${this.affectedNodes}]: |-
