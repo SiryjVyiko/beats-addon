@@ -40,7 +40,7 @@ settings:
             value: false
   
       - type: string
-        name: elasticsearchHost
+        name: opensearchHost
         caption: OpenSearch Host (optional)
         placeholder: 0.0.0.0:9200
         required: false
@@ -50,7 +50,7 @@ settings:
         defaultMargins: 0 10 0 0
         items:
           - type: string
-            name: elasticsearchUser
+            name: opensearchUser
             placeholder: User
             width: 200
 
@@ -60,12 +60,12 @@ settings:
             width: 60
 
           - type: string
-            name: elasticsearchPassword
+            name: opensearchPassword
             inputType: password
             width: 163
           
       - type: string
-        name: kibanaHost
+        name: osearchdashboardHost
         caption: OpenSearch Dashboards Host (optional)
         placeholder: 0.0.0.0:5601
         required: false
@@ -120,12 +120,12 @@ onAfterClone:
       packetbeat: ${settings.packetbeat}
       metricbeat: ${settings.metricbeat}
       heartbeat: ${settings.heartbeat}
-      elasticsearchHost: ${settings.elasticsearchHost}
-      kibanaHost: ${settings.kibanaHost}
+      opensearchHost: ${settings.opensearchHost}
+      osearchdashboardHost: ${settings.osearchdashboardHost}
       logstashHost: ${settings.logstashHost}
       beatsossversion: ${settings.beatsossversion}
-      elasticsearchUser: ${settings.elasticsearchUser}
-      elasticsearchPassword: ${settings.elasticsearchPassword}
+      opensearchUser: ${settings.opensearchUser}
+      opensearchPassword: ${settings.opensearchPassword}
 
 onUninstall:
   uninstallAllAgents
@@ -275,17 +275,17 @@ actions:
       user: root
       
   configureService:
-    - if ('${settings.elasticsearchHost:}'):
+    - if ('${settings.opensearchHost:}'):
         - cmd [${this.affectedNodes}]: |-
             sed -ci -e 's/^#output.elasticsearch:/output.elasticsearch:/g' ${this.serviceConfigPath};
             grep -q 'ssl.verification_mode' ${this.serviceConfigPath} || sed -ci -e '/^output.elasticsearch/ a\  ssl.verification_mode: "none"' ${this.serviceConfigPath};
-            sed -ci -e 's/[#]*hosts:[[:space:]]*\[".*:9200"\]/hosts: ["${settings.elasticsearchHost}"]/g' ${this.serviceConfigPath};
+            sed -ci -e 's/[#]*hosts:[[:space:]]*\[".*:9200"\]/hosts: ["${settings.opensearchHost}"]/g' ${this.serviceConfigPath};
             sed -ci -e 's/#protocol: "https"/protocol: "https"/g' ${this.serviceConfigPath};
           user: root
-        - if ('${settings.elasticsearchUser:}'):
+        - if ('${settings.opensearchUser:}'):
             - cmd [${this.affectedNodes}]: |-
-                sed -ci -e 's/#username:[[:space:]]*"elastic"/username: "${settings.elasticsearchUser}"/g' ${this.serviceConfigPath};
-                sed -ci -e 's/#password:[[:space:]]*"changeme"/password: "${settings.elasticsearchPassword:}"/g' ${this.serviceConfigPath};
+                sed -ci -e 's/#username:[[:space:]]*"elastic"/username: "${settings.opensearchUser}"/g' ${this.serviceConfigPath};
+                sed -ci -e 's/#password:[[:space:]]*"changeme"/password: "${settings.opensearchPassword:}"/g' ${this.serviceConfigPath};
               user: root     
     - else:
         - cmd [${this.affectedNodes}]: |-
@@ -301,9 +301,13 @@ actions:
             - cmd [${this.affectedNodes}]: |-
                 sed -ci -e 's/[#]*hosts:[[:space:]]*\[".*:5044"\]/hosts: \["localhost:5044"\]/g' ${this.serviceConfigPath};
               user: root
-    - if ('${settings.kibanaHost:}'):
+    - if ('${settings.osearchdashboardHost:}'):
         - cmd [${this.affectedNodes}]: |-
-            sed -ci -e 's/#host:[[:space:]]*"localhost:5601"/host: "${settings.kibanaHost}"/g' ${this.serviceConfigPath};
+            sed -ci -e 's/[#]*host:[[:space:]]*".*:5601"/host: "${settings.osearchdashboardHost}"/g' ${this.serviceConfigPath};
+          user: root
+    - else:
+        - cmd [${this.affectedNodes}]: |-
+            sed -ci -e 's/hosts:[[:space:]]*\[".*:5061"\]/#hosts: \["localhost:5061"\]/g' ${this.serviceConfigPath};
           user: root
   
   installModules:        
