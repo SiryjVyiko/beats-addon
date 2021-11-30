@@ -95,8 +95,9 @@ buttons:
     action: configure
 
 onInstall:
-  installBeats: 
-    affectedNodes: ${targetNodes.nodeGroup}
+  - if ('${settings.options}' != ''):
+    - installBeats: 
+        affectedNodes: ${targetNodes.nodeGroup}
 
 onAfterRedeployContainer [target]:
   installBeats:
@@ -107,67 +108,67 @@ onAfterScaleOut [target]:
     affectedNodes: ${event.response.nodes.join(id,)}
 
 onUninstall:
-  cmd [target]: |- 
-    yum -y remove filebeat journalbeat auditbeat packetbeat metricbeat heartbeat
-    rm -f /etc/yum.repos.d/elastic.repo /etc/sudoers.d/*.beat$
-  user: root
+  uninstallAllAgents
   
 actions:
   installBeats:
-    - addSigninKey
-    - createYumRepo
-    - if (${settings.filebeat:true}):
-        installAgent:
-          agentName: filebeat
-          affectedNodes: ${this.affectedNodes}
-          serviceConfigPath: /etc/filebeat/filebeat.yml
-        installModules:
-          agentName: filebeat
-          affectedNodes: ${this.affectedNodes}
+    - if ('${settings.options}' != ''):
+      - addSigninKey
+      - createYumRepo
+      - if (${settings.filebeat:true}):
+          installAgent:
+            agentName: filebeat
+            affectedNodes: ${this.affectedNodes}
+            serviceConfigPath: /etc/filebeat/filebeat.yml
+          installModules:
+            agentName: filebeat
+            affectedNodes: ${this.affectedNodes}
+      - else:
+          removeAgent:
+            agentName: filebeat
+            affectedNodes: ${this.affectedNodes}
+      - if (${settings.journalbeat:true}):
+          installAgent:
+            agentName: journalbeat
+            affectedNodes: ${this.affectedNodes}
+            serviceConfigPath: /etc/journalbeat/journalbeat.yml
+      - else:
+          removeAgent:
+            agentName: journalbeat
+            affectedNodes: ${this.affectedNodes}
+      - if (${settings.packetbeat:true}):
+          installAgent:
+            agentName: packetbeat
+            affectedNodes: ${this.affectedNodes}
+            serviceConfigPath: /etc/packetbeat/packetbeat.yml
+      - else:
+          removeAgent:
+            agentName: packetbeat
+            affectedNodes: ${this.affectedNodes}
+      - if (${settings.metricbeat:true}):
+          installAgent:
+            agentName: metricbeat
+            affectedNodes: ${this.affectedNodes}
+            serviceConfigPath: /etc/metricbeat/metricbeat.yml
+          installModules:
+            agentName: metricbeat
+            affectedNodes: ${this.affectedNodes}
+      - else:
+          removeAgent:
+            agentName: metricbeat
+            affectedNodes: ${this.affectedNodes}
+      - if (${settings.heartbeat:true}):
+          installAgent:
+            agentName: heartbeat-elastic
+            affectedNodes: ${this.affectedNodes}
+            serviceConfigPath: /etc/heartbeat/heartbeat.yml
+      - else:
+          removeAgent:
+            agentName: heartbeat-elastic
+            affectedNodes: ${this.affectedNodes}
     - else:
-        removeAgent:
-          agentName: filebeat
-          affectedNodes: ${this.affectedNodes}
-    - if (${settings.journalbeat:true}):
-        installAgent:
-          agentName: journalbeat
-          affectedNodes: ${this.affectedNodes}
-          serviceConfigPath: /etc/journalbeat/journalbeat.yml
-    - else:
-        removeAgent:
-          agentName: journalbeat
-          affectedNodes: ${this.affectedNodes}
-    - if (${settings.packetbeat:true}):
-        installAgent:
-          agentName: packetbeat
-          affectedNodes: ${this.affectedNodes}
-          serviceConfigPath: /etc/packetbeat/packetbeat.yml
-    - else:
-        removeAgent:
-          agentName: packetbeat
-          affectedNodes: ${this.affectedNodes}
-    - if (${settings.metricbeat:true}):
-        installAgent:
-          agentName: metricbeat
-          affectedNodes: ${this.affectedNodes}
-          serviceConfigPath: /etc/metricbeat/metricbeat.yml
-        installModules:
-          agentName: metricbeat
-          affectedNodes: ${this.affectedNodes}
-    - else:
-        removeAgent:
-          agentName: metricbeat
-          affectedNodes: ${this.affectedNodes}
-    - if (${settings.heartbeat:true}):
-        installAgent:
-          agentName: heartbeat-elastic
-          affectedNodes: ${this.affectedNodes}
-          serviceConfigPath: /etc/heartbeat/heartbeat.yml
-    - else:
-        removeAgent:
-          agentName: heartbeat-elastic
-          affectedNodes: ${this.affectedNodes}
-          
+        uninstallAllAgents
+        
   installAgent:
     - installPackage:
         packageName: ${this.agentName}
@@ -319,3 +320,9 @@ actions:
   configure:
     installBeats: 
       affectedNodes: ${targetNodes.nodeGroup}
+      
+  uninstallAllAgents:
+    cmd [target]: |- 
+      yum -y remove filebeat journalbeat auditbeat packetbeat metricbeat heartbeat
+      rm -f /etc/yum.repos.d/elastic.repo /etc/sudoers.d/*.beat$
+    user: root
