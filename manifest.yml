@@ -41,7 +41,7 @@ settings:
   
       - type: string
         name: elasticsearchHost
-        caption: OpenSearch (Elasticsearch) Host (optional)
+        caption: OpenSearch Host (optional)
         placeholder: 0.0.0.0:9200
         required: false
       
