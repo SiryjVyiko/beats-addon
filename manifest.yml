@@ -2,7 +2,7 @@ type: update
 name: Elastic Beats
 id: elasticbeats
 
-logo: https://iconape.com/wp-content/png_logo_vector/elastic-beats.png
+logo: https://raw.githubusercontent.com/SiryjVyiko/beats-addon/main/elastic-beats.png
 description:
   short: 'Elastic Beats: Lightweight data shippers'
   text: |
