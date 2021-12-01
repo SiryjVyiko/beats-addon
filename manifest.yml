@@ -259,11 +259,15 @@ actions:
   installPackage:
     - if ('${settings.beatsossversion}' == 'latest'):
         - cmd [${this.affectedNodes}]: |-
-            yum install -y ${this.packageName}
+            if ! rpm -qa|grep filebeat; then 
+              yum install -y ${this.packageName}
+            fi
           user: root
     - else:
         - cmd [${this.affectedNodes}]: |-
-            yum install -y ${this.packageName}-${settings.beatsossversion}
+            if ! rpm -qa|grep filebeat; then
+              yum install -y ${this.packageName}-${settings.beatsossversion}
+            fi
           user: root
     - cmd [${this.affectedNodes}]: |-
         systemctl enable ${this.packageName}
