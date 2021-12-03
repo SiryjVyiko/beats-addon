@@ -225,7 +225,7 @@ actions:
   
   addToExtendPerm:
     cmd [${this.affectedNodes}]: |- 
-      sed -ci -e 's|common |common /etc/${this.agentName};/var/log/${this.agentName};|g' /etc/jelastic/extendperm.conf;
+      grep -q ${this.agentName} /etc/jelastic/extendperm.conf || sed -ci -e 's|common |common /etc/${this.agentName};/var/log/${this.agentName};|g' /etc/jelastic/extendperm.conf;
       jem filemanager extendperm;
     user: root
     
