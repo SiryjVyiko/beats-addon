@@ -2,14 +2,14 @@ type: install
 name: Elastic Beats Multiple
 id: elasticbeats-multiple
 
-logo: https://raw.githubusercontent.com/DmytroZubelevych/beats-jps-addon/master/elastic-beats.png
+logo: https://raw.githubusercontent.com/SiryjVyiko/beats-addon/main/elastic-beats.png
 description:
   short: 'Elastic Beats: Lightweight data shippers'
   text: |
     Beats is a free and open platform for single-purpose data shippers. They send data from nodes of your environments to Logstash or OpenSearch (Elasticsearch).
 homepage: https://www.elastic.co/beats/
 
-baseUrl: https://raw.githubusercontent.com/SiryjVyiko/beats-jps-addon/main/
+baseUrl: https://raw.githubusercontent.com/SiryjVyiko/beats-addon/main/
 
 settings:
   fields:
