@@ -132,7 +132,7 @@ actions:
   installBeats:
     - if ('${settings.options}' != ''):
       - addSigninKey
-      - createYumRepo
+      - createRepo
       - if (${settings.filebeat:true}):
           installAgent:
             agentName: filebeat
@@ -220,7 +220,12 @@ actions:
       user: root
 
   addSigninKey:
-    cmd [${targetNodes.nodeGroup}]: rpm --import https://packages.elastic.co/GPG-KEY-elasticsearch
+    cmd [${targetNodes.nodeGroup}]: |-
+      if which yum &>/dev/null; then
+          rpm --import https://packages.elastic.co/GPG-KEY-elasticsearch
+      else
+          wget -qO - https://artifacts.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add -
+      fi
     user: root
   
   addToExtendPerm:
@@ -229,7 +234,7 @@ actions:
       jem filemanager extendperm;
     user: root
     
-  createYumRepo:
+  createRepo:
     - set:
         body: |
           [elastic-7.x]
@@ -241,7 +246,12 @@ actions:
           autorefresh=1
           type=rpm-md
 
-    - cmd [${targetNodes.nodeGroup}]: echo '${this.body}' > /etc/yum.repos.d/elastic.repo
+    - cmd [${targetNodes.nodeGroup}]: |-
+        if which yum &>/dev/null; then 
+            echo '${this.body}' > /etc/yum.repos.d/elastic.repo
+        else
+            echo "deb https://artifacts.elastic.co/packages/7.x/apt stable main" > /etc/apt/sources.list.d/elastic-7.x.list
+        fi
       user: root
       
   addServiceToSudoers:
