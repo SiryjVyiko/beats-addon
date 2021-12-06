@@ -230,7 +230,7 @@ actions:
   
   addToExtendPerm:
     cmd [${this.affectedNodes}]: |- 
-      grep -q ${this.agentName} /etc/jelastic/extendperm.conf || sed -ci -e 's|common |common /etc/${this.agentName};/var/log/${this.agentName};|g' /etc/jelastic/extendperm.conf;
+      grep -q ${this.agentName} /etc/jelastic/extendperm.conf || sed -i 's|common |common /etc/${this.agentName};/var/log/${this.agentName};|g' /etc/jelastic/extendperm.conf;
       if which jem; then jem filemanager extendperm; else true; fi
     user: root
     
@@ -261,7 +261,7 @@ actions:
           %ssh-access ALL = NOPASSWD: agent_name_SERVICE
     - cmd [${this.affectedNodes}]: |-
         echo '${this.body}' > /etc/sudoers.d/${this.agentName}
-        sed -ci -e "s/agent_name/$(echo ${this.agentName}|awk -F- '{print $1}'|tr a-z A-Z)/" /etc/sudoers.d/${this.agentName}
+        sed -i "s/agent_name/$(echo ${this.agentName}|awk -F- '{print $1}'|tr a-z A-Z)/" /etc/sudoers.d/${this.agentName}
       user: root
       
   installPackage:
