@@ -334,6 +334,9 @@ actions:
         - cmd [${this.affectedNodes}]: |-
             sed -ci -e 's/hosts:[[:space:]]*\[".*:5061"\]/#hosts: \["localhost:5061"\]/g' ${this.serviceConfigPath};
           user: root
+    - cmd [${this.affectedNodes}]: |-
+        if which jem; then jem filemanager extendperm; else true; fi
+      user: root
   
   installModules:        
     - script: |
