@@ -372,6 +372,8 @@ actions:
         rm -f /etc/yum.repos.d/${this.agentName};
         if which yum &>/dev/null; then
           yum -y remove ${this.agentName};
+        else
+          apt remove -y ${this.agentName};
         fi
       user: root
   
@@ -382,7 +384,9 @@ actions:
   uninstallAllAgents:
     cmd [target]: |-
       if which yum &>/dev/null; then
-        yum -y remove filebeat journalbeat auditbeat packetbeat metricbeat heartbeat
+        yum -y remove filebeat journalbeat packetbeat metricbeat heartbeat
+      else
+        apt remove -y filebeat journalbeat packetbeat metricbeat heartbeat
       fi
       rm -f /etc/yum.repos.d/elastic.repo /etc/sudoers.d/*.beat$
     user: root
