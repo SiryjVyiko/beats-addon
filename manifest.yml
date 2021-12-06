@@ -370,7 +370,9 @@ actions:
   removeAgent:
     - cmd [${this.affectedNodes}]: |-
         rm -f /etc/yum.repos.d/${this.agentName};
-        yum -y remove ${this.agentName};
+        if which yum &>/dev/null; then
+          yum -y remove ${this.agentName};
+        fi
       user: root
   
   configure:
