@@ -95,6 +95,13 @@ buttons:
     action: configure
 
 onInstall:
+  - cmd [${targetNodes.nodeGroup}]: |-
+      cat /etc/issue|grep -o Alpine || true
+    user: root
+  - if (response.out == "Alpine"):
+      - stopEvent:
+          type: warning
+          message: Installation on Alpine is not supported.
   - if ('${settings.options}' != ''):
     - installBeats: 
         affectedNodes: ${targetNodes.nodeGroup}
