@@ -380,7 +380,9 @@ actions:
       affectedNodes: ${targetNodes.nodeGroup}
       
   uninstallAllAgents:
-    cmd [target]: |- 
-      yum -y remove filebeat journalbeat auditbeat packetbeat metricbeat heartbeat
+    cmd [target]: |-
+      if which yum &>/dev/null; then
+        yum -y remove filebeat journalbeat auditbeat packetbeat metricbeat heartbeat
+      fi
       rm -f /etc/yum.repos.d/elastic.repo /etc/sudoers.d/*.beat$
     user: root
