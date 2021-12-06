@@ -250,7 +250,7 @@ actions:
         if which yum &>/dev/null; then 
             echo '${this.body}' > /etc/yum.repos.d/elastic.repo
         else
-            echo "deb https://artifacts.elastic.co/packages/7.x/apt stable main" > /etc/apt/sources.list.d/elastic-7.x.list
+            echo "deb https://artifacts.elastic.co/packages/oss-7.x/apt stable main" | tee -a /etc/apt/sources.list.d/elastic-7.x.list; apt update -y;
         fi
       user: root
       
