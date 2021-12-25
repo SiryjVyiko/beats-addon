@@ -392,19 +392,19 @@ actions:
   uninstallAllAgents:
     - removeAgent:
         agentName: filebeat
-        affectedNodes: ${this.affectedNodes}
+        affectedNodes: ${targetNodes.nodeGroup}
     - removeAgent:
         agentName: journalbeat
-        affectedNodes: ${this.affectedNodes}
+        affectedNodes: ${targetNodes.nodeGroup}
     - removeAgent:
         agentName: paccketbeat
-        affectedNodes: ${this.affectedNodes}
+        affectedNodes: ${targetNodes.nodeGroup}
     - removeAgent:
         agentName: metricbeat
-        affectedNodes: ${this.affectedNodes}
+        affectedNodes: ${targetNodes.nodeGroup}
     - removeAgent:
         agentName: heartbeat-elastic
-        affectedNodes: ${this.affectedNodes}
+        affectedNodes: ${targetNodes.nodeGroup}
     - cmd [target]: |-
         rm -f /etc/yum.repos.d/elastic.repo
       user: root
