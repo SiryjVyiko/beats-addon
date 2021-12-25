@@ -397,7 +397,7 @@ actions:
         agentName: journalbeat
         affectedNodes: ${targetNodes.nodeGroup}
     - removeAgent:
-        agentName: paccketbeat
+        agentName: packetbeat
         affectedNodes: ${targetNodes.nodeGroup}
     - removeAgent:
         agentName: metricbeat
