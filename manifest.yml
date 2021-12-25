@@ -237,8 +237,7 @@ actions:
   
   addToExtendPerm:
     cmd [${this.affectedNodes}]: |-
-      AGENT_CONF_DIR=$(echo ${this.agentName}|awk -F - '{print $1}')
-      grep -q ${AGENT_CONF_DIR} /etc/jelastic/extendperm.conf || sed -i 's|common |common /etc/${AGENT_CONF_DIR};/var/log/${this.agentName};|g' /etc/jelastic/extendperm.conf;
+      grep -q $(echo ${this.agentName}|awk -F- '{print $1}'|tr a-z A-Z) /etc/jelastic/extendperm.conf || sed -i 's|common |common /etc/$(echo ${this.agentName}|awk -F- '{print $1}'|tr a-z A-Z);/var/log/${this.agentName};|g' /etc/jelastic/extendperm.conf;
       if which jem; then jem filemanager extendperm; else true; fi
     user: root
     
