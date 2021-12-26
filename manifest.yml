@@ -41,12 +41,12 @@ settings:
   
       - type: string
         name: opensearchHost
-        caption: OpenSearch Host (optional)
+        caption: OpenSearch Host (opt.)
         placeholder: 0.0.0.0:9200
         required: false
       
       - type: compositefield
-        caption: Credentials (optional)
+        caption: Credentials (opt.)
         defaultMargins: 0 10 0 0
         items:
           - type: string
@@ -66,13 +66,13 @@ settings:
           
       - type: string
         name: osearchdashboardHost
-        caption: OpenSearch Dashboards Host (optional)
+        caption: OpenSearch Dashboards Host (opt.)
         placeholder: 0.0.0.0:5601
         required: false
       
       - type: string
         name: logstashHost
-        caption: Logstash Host (optional)
+        caption: Logstash Host (opt.)
         placeholder: 0.0.0.0:5044
         required: false
       
@@ -316,8 +316,10 @@ actions:
           user: root
         - if ('${settings.opensearchUser:}'):
             - cmd [${this.affectedNodes}]: |-
-                sed -i 's/#username:[[:space:]]*"elastic"/username: "${settings.opensearchUser}"/g' ${this.serviceConfigPath};
-                sed -i 's/#password:[[:space:]]*"changeme"/password: "${settings.opensearchPassword:}"/g' ${this.serviceConfigPath};
+                sed -i 's/#username[[:space:]]*:/username:/g' ${this.serviceConfigPath};
+                sed -i 's/#password[[:space:]]*:/password:/g' ${this.serviceConfigPath};
+                sed -i 's/username[[:space:]]*:.*/username: "${settings.opensearchUser}"/g' ${this.serviceConfigPath};
+                sed -i 's/password[[:space:]]*:.*/password: "${settings.opensearchPassword:}"/g' ${this.serviceConfigPath};
               user: root     
     - else:
         - cmd [${this.affectedNodes}]: |-
@@ -376,13 +378,13 @@ actions:
       
   removeAgent:
     - cmd [${this.affectedNodes}]: |-
-        service ${this.agentName} stop
-        rm -f /etc/sudoers.d/${this.agentName};
+        service ${this.agentName} stop  
         if which yum &>/dev/null; then
           yum -y remove ${this.agentName};
         else
           apt remove -y ${this.agentName};
         fi
+        rm -f /etc/sudoers.d/${this.agentName} /etc/${this.agentName};
       user: root
   
   configure:
