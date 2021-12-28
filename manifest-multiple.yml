@@ -48,11 +48,16 @@ settings:
       caption: Credentials (opt.)
       defaultMargins: 0 10 0 0
       items:
+        - type: displayfield
+          cls: x-form-item-label
+          value: User
+          width: 30
+        
         - type: string
           name: opensearchUser
-          placeholder: User
-          width: 200
-
+          placeholder: OpenSearch username
+          width: 180
+            
         - type: displayfield
           cls: x-form-item-label
           value: Password
@@ -60,8 +65,15 @@ settings:
 
         - type: string
           name: opensearchPassword
+          placeholder: password
           inputType: password
-          width: 163
+          width: 153
+          
+    - type: string
+      name: apiKey
+      caption: API Key (opt.)
+      placeholder: id:api_key
+      required: false
           
     - type: string
       name: osearchdashboardHost
@@ -146,9 +158,9 @@ onBeforeInit: |
   }
 
   if (envs.length > 0) {
-    jps.settings.fields[7].values = envs;
-    jps.settings.fields[7].value = envs[0].value;
-    jps.settings.fields[8].showIf.specificNodeGroups[0].dependsOn.envName = nodes;
+    jps.settings.fields[8].values = envs;
+    jps.settings.fields[8].value = envs[0].value;
+    jps.settings.fields[9].showIf.specificNodeGroups[0].dependsOn.envName = nodes;
   }
 
   return { result: 0, settings: jps.settings };
