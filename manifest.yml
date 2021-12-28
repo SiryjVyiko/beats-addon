@@ -54,11 +54,6 @@ settings:
             placeholder: User
             width: 200
 
-          - type: displayfield
-            cls: x-form-item-label
-            value: Password
-            width: 60
-
           - type: string
             name: opensearchPassword
             inputType: password
