@@ -63,11 +63,17 @@ settings:
             name: opensearchPassword
             inputType: password
             width: 163
+        
+      - type: string
+        name: apiKey
+        caption: API Key (opt.)
+        placeholder: id:api_key
+        required: false
           
       - type: string
         name: osearchdashboardHost
         caption: OpenSearch Dashboards Host (opt.)
-        placeholder: 0.0.0.0:5601
+        placeholder: 0.0.0.0:80
         required: false
       
       - type: string
@@ -131,6 +137,7 @@ onAfterClone:
       beatsossversion: ${settings.beatsossversion}
       opensearchUser: ${settings.opensearchUser}
       opensearchPassword: ${settings.opensearchPassword}
+      apiKey: ${settings.apiKey}
 
 onUninstall:
   uninstallAllAgents
@@ -320,7 +327,18 @@ actions:
                 sed -i 's/#password[[:space:]]*:/password:/g' ${this.serviceConfigPath};
                 sed -i 's/username[[:space:]]*:.*/username: "${settings.opensearchUser}"/g' ${this.serviceConfigPath};
                 sed -i 's/password[[:space:]]*:.*/password: "${settings.opensearchPassword:}"/g' ${this.serviceConfigPath};
-              user: root     
+                sed -i 's/^[[:space:]]*api_key[[:space:]]*:.*/  #api_key: "id:api_key"/g' ${this.serviceConfigPath};
+              user: root
+        - else:
+            - cmd [${this.affectedNodes}]: |-
+                sed -i 's/^[[:space:]]*username[[:space:]]*:.*/  #username: "username"/g' ${this.serviceConfigPath};
+                sed -i 's/^[[:space:]]*password[[:space:]]*:.*/  #password: "password"/g' ${this.serviceConfigPath};
+              user: root
+            - if ('${settings.apiKey:}'):
+                cmd [${this.affectedNodes}]: |-
+                  sed -i 's/#api_key: "id:api_key"/api_key:/g' ${this.serviceConfigPath};
+                  sed -i 's/api_key[[:space:]]*:.*/api_key: "${settings.apiKey}"/g' ${this.serviceConfigPath};
+                user: root
     - else:
         - cmd [${this.affectedNodes}]: |-
             sed -i 's/^[[:space:]]*output.elasticsearch:/#output.elasticsearch:/g' ${this.serviceConfigPath};
@@ -333,15 +351,15 @@ actions:
               user: root
         - else:
             - cmd [${this.affectedNodes}]: |-
-                sed -i 's/[#]*hosts:[[:space:]]*\[".*:5044"\]/hosts: \["localhost:5044"\]/g' ${this.serviceConfigPath};
+                sed -i 's/[#]*hosts:[[:space:]]*\[".*:5044"\]/#hosts: \["localhost:5044"\]/g' ${this.serviceConfigPath};
               user: root
     - if ('${settings.osearchdashboardHost:}'):
         - cmd [${this.affectedNodes}]: |-
-            sed -i 's/[#]*host:[[:space:]]*".*:5601"/host: "${settings.osearchdashboardHost}"/g' ${this.serviceConfigPath};
+            sed -i 's/[#]*host[[:space:]]*:.*/host: "${settings.osearchdashboardHost}"/g' ${this.serviceConfigPath};
           user: root
     - else:
         - cmd [${this.affectedNodes}]: |-
-            sed -i 's/hosts:[[:space:]]*\[".*:5061"\]/#hosts: \["localhost:5061"\]/g' ${this.serviceConfigPath};
+            sed -i 's/[[:space:]]*host[[:space:]]*:.*/#host: \["localhost:5061"\]/g' ${this.serviceConfigPath};
           user: root
     - cmd [${this.affectedNodes}]: |-
         if which jem; then jem filemanager extendperm; else true; fi
@@ -384,7 +402,7 @@ actions:
         else
           apt remove -y ${this.agentName};
         fi
-        rm -f /etc/sudoers.d/${this.agentName} /etc/${this.agentName};
+        rm -rf /etc/sudoers.d/${this.agentName} /etc/${this.agentName};
       user: root
   
   configure:
