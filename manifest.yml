@@ -15,7 +15,7 @@ settings:
   main:
     fields:
       - type: checkboxlist
-        caption: Installed agents
+        caption: Installed Agents
         name: options
         columns: 2
         values:
@@ -38,15 +38,30 @@ settings:
           - name: heartbeat
             caption: Heartbeat
             value: false
+          
+      - type: list
+        name: beatsossversion
+        caption: Beats OSS Version
+        values:
+          7.12.1: 7.12.1
+          latest: latest
+        default: 7.12.1
+        hideLabel: false
+        hidden: false
+        
+      - caption: Optional Parameters
+        type: displayfield
+        name: displayfield
+        hidden: false
   
       - type: string
         name: opensearchHost
-        caption: OpenSearch Host (opt.)
+        caption: OpenSearch Host
         placeholder: 0.0.0.0:9200
         required: false
       
       - type: compositefield
-        caption: Credentials (opt.)
+        caption: Credentials
         defaultMargins: 0 10 0 0
         items:
           - type: displayfield
@@ -72,31 +87,21 @@ settings:
         
       - type: string
         name: apiKey
-        caption: API Key (opt.)
+        caption: API Key
         placeholder: id:api_key
         required: false
           
       - type: string
         name: osearchdashboardHost
-        caption: OpenSearch Dashboards Host (opt.)
+        caption: OpenSearch Dashboards Host
         placeholder: 0.0.0.0:80
         required: false
       
       - type: string
         name: logstashHost
-        caption: Logstash Host (opt.)
+        caption: Logstash Host
         placeholder: 0.0.0.0:5044
         required: false
-      
-      - type: list
-        name: beatsossversion
-        caption: Beats OSS version
-        values:
-          7.12.1: 7.12.1
-          latest: latest
-        default: 7.12.1
-        hideLabel: false
-        hidden: false
 
 nodeGroupAlias:
   ${targetNodes.nodeGroup}: target
