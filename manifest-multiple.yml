@@ -37,6 +37,21 @@ settings:
         - name: heartbeat
           caption: Heartbeat
           value: false
+          
+    - type: list
+      name: beatsossversion
+      caption: Beats OSS Version
+      values:
+        7.12.1: 7.12.1
+        latest: latest
+      default: 7.12.1
+      hideLabel: false
+      hidden: false
+        
+    - caption: Optional Parameters
+      type: displayfield
+      name: displayfield
+      hidden: false
 
     - type: string
       name: opensearchHost
@@ -86,16 +101,6 @@ settings:
       caption: Logstash Host (opt.)
       placeholder: 0.0.0.0:5044
       required: false
-      
-    - type: list
-      name: beatsossversion
-      caption: Beats OSS version
-      values:
-        7.12.1: 7.12.1
-        latest: latest
-      default: 7.12.1
-      hideLabel: false
-      hidden: false
           
     - type: spacer
 
@@ -158,9 +163,9 @@ onBeforeInit: |
   }
 
   if (envs.length > 0) {
-    jps.settings.fields[8].values = envs;
-    jps.settings.fields[8].value = envs[0].value;
-    jps.settings.fields[9].showIf.specificNodeGroups[0].dependsOn.envName = nodes;
+    jps.settings.fields[9].values = envs;
+    jps.settings.fields[9].value = envs[0].value;
+    jps.settings.fields[10].showIf.specificNodeGroups[0].dependsOn.envName = nodes;
   }
 
   return { result: 0, settings: jps.settings };
